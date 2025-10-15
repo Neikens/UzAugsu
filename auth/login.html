@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pieslēgties - Garīgā Uzlāde</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>💪 Garīgā Uzlāde</h1>
+            <p class="subtitle">Pieslēdzies, lai turpinātu</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">E-pasts</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Parole</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Pieslēgties</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Nav konta? <a href="/auth/register.html">Reģistrējies šeit</a></p>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const response = await fetch('/api/login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Pieslēgšanās veiksmīga! Pāradresē...';
+                    setTimeout(() => window.location.href = '/', 1000);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Pieslēgšanās kļūda. Mēģiniet vēlreiz.';
+            }
+        });
+    </script>
+</body>
+</html>

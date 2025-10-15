@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reģistrēties - Garīgā Uzlāde</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>💪 Garīgā Uzlāde</h1>
+            <p class="subtitle">Izveido jaunu kontu</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="email">E-pasts</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Parole (min 8 simboli)</label>
+                    <input type="password" id="password" name="password" minlength="8" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password_confirm">Apstiprini paroli</label>
+                    <input type="password" id="password_confirm" name="password_confirm" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Reģistrēties</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Jau ir konts? <a href="/auth/login.html">Pieslēdzies šeit</a></p>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('password_confirm').value;
+            const messageDiv = document.getElementById('message');
+            
+            if (password !== confirm) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Paroles nesakrīt!';
+                return;
+            }
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `Sveicināti, ${data.nickname}! Pāradresē...`;
+                    setTimeout(() => window.location.href = '/', 1500);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Reģistrācijas kļūda. Mēģiniet vēlreiz.';
+            }
+        });
+    </script>
+</body>
+</html>
